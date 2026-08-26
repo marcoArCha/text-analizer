@@ -1,0 +1,38 @@
+name: Deploy to AWS Lambda
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies and package
+        run: |
+          mkdir -p package
+          pip install --target ./package mangum fastapi pydantic
+          cd package
+          zip -r ../lambda_package.zip .
+          cd ..
+          zip -g lambda_package.zip main.py
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Update Lambda Code
+        run: |
+          aws lambda update-function-code \
+            --function-name text-analyzer-api \
+            --zip-file fileb://lambda_package.zip
