@@ -2,11 +2,21 @@ import os
 from fastapi import FastAPI, Header, HTTPException, status
 from pydantic import BaseModel
 from mangum import Mangum
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Text Analyzer API")
 
-# API Key de prueba (en producción se lee de variables de entorno)
-API_KEY_SECRETA = os.getenv("API_KEY", "mi-clave-super-secreta-123")
+# Configurar CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite cualquier origen (localhost, GitHub Pages, etc.)
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite GET, POST, OPTIONS, etc.
+    allow_headers=["*"],  # Permite x-api-key, Content-Type, etc.
+)
+
+# Lee la variable de entorno configurada en AWS Lambda
+API_KEY_SECRETA = os.getenv("API_KEY", "clave-fallback-local")
 
 class TextoRequest(BaseModel):
     texto: str
