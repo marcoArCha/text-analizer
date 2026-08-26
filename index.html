@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Text Analyzer - AWS Lambda API</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex items-center justify-center p-4">
+
+  <div class="bg-gray-800 border border-gray-700 rounded-xl shadow-2xl max-w-lg w-full p-6">
+    <h1 class="text-2xl font-bold text-blue-400 mb-2">Text Analyzer API</h1>
+    <p class="text-sm text-gray-400 mb-6">Backend serverless corriendo en AWS Lambda + FastAPI</p>
+
+    <!-- Formulario -->
+    <div class="space-y-4">
+      <div>
+        <label for="apiKey" class="block text-xs font-semibold uppercase text-gray-400 mb-1">API Key Header</label>
+        <input type="password" id="apiKey" value="mi-clave-super-secreta-123" 
+          class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+      </div>
+
+      <div>
+        <label for="texto" class="block text-xs font-semibold uppercase text-gray-400 mb-1">Texto a analizar</label>
+        <textarea id="texto" rows="4" placeholder="Escribe tu texto aquí..."
+          class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500">FastAPI y AWS Lambda procesando datos serverless en tiempo real.</textarea>
+      </div>
+
+      <button onclick="analizarTexto()" 
+        class="w-full bg-blue-600 hover:bg-blue-500 font-semibold py-2.5 rounded-lg transition-colors duration-200">
+        Analizar Texto
+      </button>
+    </div>
+
+    <!-- Resultados -->
+    <div class="mt-6 pt-4 border-t border-gray-700">
+      <h2 class="text-xs font-semibold uppercase text-gray-400 mb-2">Respuesta HTTP</h2>
+      <pre id="resultado" class="bg-gray-900 border border-gray-700 rounded-lg p-3 text-xs font-mono overflow-x-auto text-green-400 mb-4">Esperando envío...</pre>
+
+      <div id="stats" class="grid grid-cols-2 gap-3 hidden">
+        <div class="bg-gray-900 p-3 rounded-lg border border-gray-700 text-center">
+          <span class="block text-2xl font-bold text-white" id="statPalabras">0</span>
+          <span class="text-xs text-gray-400">Palabras</span>
+        </div>
+        <div class="bg-gray-900 p-3 rounded-lg border border-gray-700 text-center">
+          <span class="block text-2xl font-bold text-white" id="statCaracteres">0</span>
+          <span class="text-xs text-gray-400">Caracteres</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://1whkeg19ac.execute-api.us-east-1.amazonaws.com/analizar";
+
+    async function analizarTexto() {
+      const apiKey = document.getElementById("apiKey").value;
+      const texto = document.getElementById("texto").value;
+      const resBox = document.getElementById("resultado");
+      const statsBox = document.getElementById("stats");
+
+      resBox.className = "bg-gray-900 border border-gray-700 rounded-lg p-3 text-xs font-mono overflow-x-auto text-yellow-400 mb-4";
+      resBox.innerText = "Procesando en AWS Lambda...";
+      statsBox.classList.add("hidden");
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": apiKey
+          },
+          body: JSON.stringify({ texto })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          resBox.className = "bg-gray-900 border border-gray-700 rounded-lg p-3 text-xs font-mono overflow-x-auto text-green-400 mb-4";
+          resBox.innerText = JSON.stringify(data, null, 2);
+
+          document.getElementById("statPalabras").innerText = data.resultado.total_palabras;
+          document.getElementById("statCaracteres").innerText = data.resultado.total_caracteres;
+          statsBox.classList.remove("hidden");
+        } else {
+          resBox.className = "bg-gray-900 border border-red-700 rounded-lg p-3 text-xs font-mono overflow-x-auto text-red-400 mb-4";
+          resBox.innerText = `Error (${response.status}):\n` + JSON.stringify(data, null, 2);
+        }
+      } catch (err) {
+        resBox.className = "bg-gray-900 border border-red-700 rounded-lg p-3 text-xs font-mono overflow-x-auto text-red-400 mb-4";
+        resBox.innerText = "Error de red/CORS:\n" + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
