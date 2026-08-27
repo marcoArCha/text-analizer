@@ -1,53 +1,102 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Text Analyzer - AWS Lambda API</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-gray-900 text-gray-100 min-h-screen py-10 px-4 flex flex-col items-center justify-center">
 
-  <div class="bg-gray-800 border border-gray-700 rounded-xl shadow-2xl max-w-lg w-full p-6">
-    <h1 class="text-2xl font-bold text-blue-400 mb-2">Text Analyzer API</h1>
-    <p class="text-sm text-gray-400 mb-6">Backend serverless corriendo en AWS Lambda + FastAPI</p>
+  <div class="max-w-3xl w-full space-y-6">
 
-    <!-- Formulario -->
-    <div class="space-y-4">
-      <div>
-        <label for="apiKey" class="block text-xs font-semibold uppercase text-gray-400 mb-1">API Key Header</label>
-        <input type="password" id="apiKey" value="mi-clave-super-secreta-123" 
-          class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+    <!-- Overview Section for Employers -->
+    <div class="bg-gray-800 border border-gray-700 rounded-xl shadow-2xl p-6">
+      <h1 class="text-3xl font-bold text-blue-400 mb-2">Text Analyzer Serverless API</h1>
+      <p class="text-sm text-gray-300 leading-relaxed mb-6">
+        A lightweight serverless text analysis engine designed to compute string metrics in real-time. Built as a proof-of-concept for automated Cloud Native microservices and CI/CD automation.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <!-- Technologies -->
+        <div class="bg-gray-900 p-4 rounded-lg border border-gray-700">
+          <h2 class="text-xs font-bold uppercase text-blue-400 mb-2">Technologies Used</h2>
+          <ul class="text-xs text-gray-300 space-y-1 list-disc list-inside">
+            <li>Python 3.12 & FastAPI</li>
+            <li>Mangum (ASGI Adapter)</li>
+            <li>AWS Lambda & API Gateway</li>
+            <li>GitHub Actions (CI/CD)</li>
+            <li>Tailwind CSS</li>
+          </ul>
+        </div>
+
+        <!-- Challenges -->
+        <div class="bg-gray-900 p-4 rounded-lg border border-gray-700">
+          <h2 class="text-xs font-bold uppercase text-blue-400 mb-2">Engineering Challenges</h2>
+          <ul class="text-xs text-gray-300 space-y-1 list-disc list-inside">
+            <li>CORS Pre-flight handling</li>
+            <li>Cross-compiling C-extensions</li>
+            <li>Payload v2 mapping in Mangum</li>
+            <li>API Key validation logic</li>
+          </ul>
+        </div>
+
+        <!-- Key Learnings -->
+        <div class="bg-gray-900 p-4 rounded-lg border border-gray-700">
+          <h2 class="text-xs font-bold uppercase text-blue-400 mb-2">Key Takeaways</h2>
+          <ul class="text-xs text-gray-300 space-y-1 list-disc list-inside">
+            <li>Targeting <code class="text-yellow-400">manylinux2014</code> wheels</li>
+            <li>Decoupling CI/CD packaging</li>
+            <li>Cold-start optimization</li>
+            <li>CloudWatch log debugging</li>
+          </ul>
+        </div>
       </div>
-
-      <div>
-        <label for="texto" class="block text-xs font-semibold uppercase text-gray-400 mb-1">Texto a analizar</label>
-        <textarea id="texto" rows="4" placeholder="Escribe tu texto aquí..."
-          class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500">FastAPI y AWS Lambda procesando datos serverless en tiempo real.</textarea>
-      </div>
-
-      <button onclick="analizarTexto()" 
-        class="w-full bg-blue-600 hover:bg-blue-500 font-semibold py-2.5 rounded-lg transition-colors duration-200">
-        Analizar Texto
-      </button>
     </div>
 
-    <!-- Resultados -->
-    <div class="mt-6 pt-4 border-t border-gray-700">
-      <h2 class="text-xs font-semibold uppercase text-gray-400 mb-2">Respuesta HTTP</h2>
-      <pre id="resultado" class="bg-gray-900 border border-gray-700 rounded-lg p-3 text-xs font-mono overflow-x-auto text-green-400 mb-4">Esperando envío...</pre>
+    <!-- Live Demo Interface -->
+    <div class="bg-gray-800 border border-gray-700 rounded-xl shadow-2xl p-6">
+      <h2 class="text-xl font-bold text-white mb-1">Live API Test Interface</h2>
+      <p class="text-xs text-gray-400 mb-6">Serverless backend running on AWS Lambda + FastAPI</p>
 
-      <div id="stats" class="grid grid-cols-2 gap-3 hidden">
-        <div class="bg-gray-900 p-3 rounded-lg border border-gray-700 text-center">
-          <span class="block text-2xl font-bold text-white" id="statPalabras">0</span>
-          <span class="text-xs text-gray-400">Palabras</span>
+      <!-- Form -->
+      <div class="space-y-4">
+        <div>
+          <label for="apiKey" class="block text-xs font-semibold uppercase text-gray-400 mb-1">API Key Header</label>
+          <input type="password" id="apiKey" value="mi-clave-super-secreta-123" 
+            class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
         </div>
-        <div class="bg-gray-900 p-3 rounded-lg border border-gray-700 text-center">
-          <span class="block text-2xl font-bold text-white" id="statCaracteres">0</span>
-          <span class="text-xs text-gray-400">Caracteres</span>
+
+        <div>
+          <label for="texto" class="block text-xs font-semibold uppercase text-gray-400 mb-1">Text to Analyze</label>
+          <textarea id="texto" rows="4" placeholder="Enter your text here..."
+            class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500">FastAPI and AWS Lambda processing serverless data in real time.</textarea>
+        </div>
+
+        <button onclick="analizarTexto()" 
+          class="w-full bg-blue-600 hover:bg-blue-500 font-semibold py-2.5 rounded-lg transition-colors duration-200">
+          Analyze Text
+        </button>
+      </div>
+
+      <!-- Results -->
+      <div class="mt-6 pt-4 border-t border-gray-700">
+        <h3 class="text-xs font-semibold uppercase text-gray-400 mb-2">HTTP Response</h3>
+        <pre id="resultado" class="bg-gray-900 border border-gray-700 rounded-lg p-3 text-xs font-mono overflow-x-auto text-green-400 mb-4">Awaiting request...</pre>
+
+        <div id="stats" class="grid grid-cols-2 gap-3 hidden">
+          <div class="bg-gray-900 p-3 rounded-lg border border-gray-700 text-center">
+            <span class="block text-2xl font-bold text-white" id="statPalabras">0</span>
+            <span class="text-xs text-gray-400">Words</span>
+          </div>
+          <div class="bg-gray-900 p-3 rounded-lg border border-gray-700 text-center">
+            <span class="block text-2xl font-bold text-white" id="statCaracteres">0</span>
+            <span class="text-xs text-gray-400">Characters</span>
+          </div>
         </div>
       </div>
     </div>
+
   </div>
 
   <script>
@@ -60,7 +109,7 @@
       const statsBox = document.getElementById("stats");
 
       resBox.className = "bg-gray-900 border border-gray-700 rounded-lg p-3 text-xs font-mono overflow-x-auto text-yellow-400 mb-4";
-      resBox.innerText = "Procesando en AWS Lambda...";
+      resBox.innerText = "Processing on AWS Lambda...";
       statsBox.classList.add("hidden");
 
       try {
@@ -88,7 +137,7 @@
         }
       } catch (err) {
         resBox.className = "bg-gray-900 border border-red-700 rounded-lg p-3 text-xs font-mono overflow-x-auto text-red-400 mb-4";
-        resBox.innerText = "Error de red/CORS:\n" + err.message;
+        resBox.innerText = "Network/CORS Error:\n" + err.message;
       }
     }
   </script>
