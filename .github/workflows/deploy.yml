@@ -13,12 +13,21 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12" 
 
       - name: Install dependencies and package
         run: |
           mkdir -p package
-          pip install --target ./package mangum fastapi pydantic
+          # Forzar descarga de binarios nativos para Linux x86_64 de AWS Lambda
+          pip install \
+            --platform manylinux2014_x86_64 \
+            --target ./package \
+            --implementation cp \
+            --python-version 3.11 \
+            --only-binary=:all: \
+            --upgrade \
+            mangum fastapi pydantic
+          
           cd package
           zip -r ../lambda_package.zip .
           cd ..
